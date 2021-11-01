@@ -37,14 +37,16 @@ void loop() {
     rightMotor1->run(FORWARD);
     rightMotor2->run(FORWARD);
   
-    leftMotorSpeed = 50;
-    rightMotorSpeed = 50;
+    leftMotorSpeed = 30;
+    rightMotorSpeed = 30;
     leftMotor1->setSpeed(leftMotorSpeed);
     leftMotor2->setSpeed(leftMotorSpeed);
     rightMotor1->setSpeed(rightMotorSpeed);
     rightMotor2->setSpeed(rightMotorSpeed);
     delay(2000);
 
+    leftMotorSpeed = 50;
+    rightMotorSpeed = 50;
     leftMotor1->run(BACKWARD);
     leftMotor2->run(BACKWARD);
     leftMotor1->setSpeed(leftMotorSpeed);
@@ -63,6 +65,9 @@ void loop() {
     rightMotor2->setSpeed(rightMotorSpeed);
     delay(2000);
 
+
+    leftMotorSpeed = 30;
+    rightMotorSpeed = 30;
     leftMotor1->run(BACKWARD);
     leftMotor2->run(BACKWARD);
     rightMotor1->run(BACKWARD);
