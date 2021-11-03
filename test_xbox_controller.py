@@ -9,7 +9,6 @@ import serial
 import serial.tools.list_ports
 
 # Set up Arduino connection
-baudrate = 9600
 arduino_ports = [
     p.device
     for p in serial.tools.list_ports.comports()
@@ -21,7 +20,9 @@ if len(arduino_ports) > 1:
     warnings.warn('Multiple Arduinos found - using the first')
 
 print(arduino_ports[0])
-arduinoSerial = serial.Serial(arduino_ports[0], baudrate)
+arduinoSerial = serial.Serial(arduino_ports[0], 9600, timeout=1)
+if not arduinoSerial.isOpen():
+    arduinoSerial.open()
 
 
 class XboxController(object):
@@ -118,7 +119,6 @@ if __name__ == '__main__':
     joy = XboxController()
     while True:
         speed_list = joy.read()
-        left_speed = int(speed_list[0])
-        right_speed = int(speed_list[1])
         print(speed_list)
-        arduinoSerial.write(str.encode(f"{left_speed},{right_speed}*"))
+        speed_string = f"{speed_list[0]},{speed_list[1]}*"
+        arduinoSerial.write(str.encode(speed_string))

@@ -18,6 +18,7 @@ int rightMotorSpeed=0;
 
 // Set up data recieve and use
 String readString;
+String data;
 char lastIncomingData;
 int ind1;
 String left_motors;
@@ -39,10 +40,15 @@ void setup() {
   rightMotor2->run(FORWARD);
   // Set up serial
   Serial.begin(9600);
+  Serial.print("wait");
 }
 void loop() {
     if (Serial.available() > 0) {
       lastIncomingData = Serial.read();
+      // say what you got:
+      Serial.print("I received: ");
+      Serial.println(lastIncomingData, DEC);
+
       if (lastIncomingData == '*'){
         ind1 = readString.indexOf(',');
         left_motors = readString.substring(0,ind1);
@@ -63,5 +69,5 @@ void loop() {
     }
     else {
       readString += lastIncomingData;
-      }
-}
+    }
+  }
