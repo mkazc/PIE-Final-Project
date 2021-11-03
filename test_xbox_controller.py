@@ -21,8 +21,6 @@ if len(arduino_ports) > 1:
 
 print(arduino_ports[0])
 arduinoSerial = serial.Serial(arduino_ports[0], 9600, timeout=1)
-if not arduinoSerial.isOpen():
-    arduinoSerial.open()
 
 
 class XboxController(object):
@@ -121,4 +119,4 @@ if __name__ == '__main__':
         speed_list = joy.read()
         print(speed_list)
         speed_string = f"{speed_list[0]},{speed_list[1]}*"
-        arduinoSerial.write(str.encode(speed_string))
+        arduinoSerial.write(speed_string.encode())
