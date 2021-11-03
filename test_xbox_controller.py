@@ -4,6 +4,25 @@ from inputs import get_gamepad
 import math
 import threading
 from control_move_trial import control_move
+import warnings
+import serial
+import serial.tools.list_ports
+
+# Set up Arduino connection
+baudrate = 9600
+arduino_ports = [
+    p.device
+    for p in serial.tools.list_ports.comports()
+    if 'Arduino' in p.description  # may need tweaking to match new arduinos
+]
+if not arduino_ports:
+    raise IOError("No Arduino found")
+if len(arduino_ports) > 1:
+    warnings.warn('Multiple Arduinos found - using the first')
+
+print(arduino_ports[0])
+arduinoSerial = serial.Serial(arduino_ports[0], baudrate)
+
 
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -98,4 +117,8 @@ class XboxController(object):
 if __name__ == '__main__':
     joy = XboxController()
     while True:
-        print(joy.read())
+        speed_list = joy.read()
+        left_speed = int(speed_list[0])
+        right_speed = int(speed_list[1])
+        print(speed_list)
+        arduinoSerial.write(str.encode(f"{left_speed},{right_speed}*"))

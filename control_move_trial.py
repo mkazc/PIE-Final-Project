@@ -25,8 +25,8 @@ def control_move(x,y,a,b,rb,rt):
             right_speed = abs(x)*MOTOR_TOP_SPEED
         else:
             left_speed = abs(x)*MOTOR_TOP_SPEED
-        return round(left_speed), round(right_speed),\
-               round(left_speed), round(right_speed)
+        return [round(left_speed), round(right_speed),\
+               round(left_speed), round(right_speed)]
     if a:
         left_speed = MOTOR_MID_SPEED + (x*MOTOR_INT_SPEED)
         right_speed = MOTOR_MID_SPEED - (x*MOTOR_INT_SPEED)
@@ -36,5 +36,5 @@ def control_move(x,y,a,b,rb,rt):
     if b:
         left_speed = 0
         right_speed = 0
-    return round(left_speed), round(right_speed),\
-           round(left_speed), round(right_speed)
+    return [round(left_speed), round(right_speed),\
+           round(left_speed), round(right_speed)]
