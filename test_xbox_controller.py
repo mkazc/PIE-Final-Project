@@ -3,6 +3,7 @@
 from inputs import get_gamepad
 import math
 import threading
+from control_move_trial import control_move
 
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -40,9 +41,10 @@ class XboxController(object):
         x = self.LeftJoystickX
         y = self.LeftJoystickY
         a = self.A
-        b = self.X # b=1, x=2
+        b = self.B # b=1, x=2
         rb = self.RightBumper
-        return [x, y, a, b, rb]
+        rt = self.RightTrigger
+        return control_move(x,y,a,b,rb,rt)
 
 
     def _monitor_controller(self):
