@@ -4,10 +4,9 @@ import serial
 import math
 import threading
 
-ser = serial.Serial()  # open serial port
-ser.baudrate = 19200
-ser.port = '' # select port
-ser
+port = 'COM3' # select port
+ard = serial.Serial(port,9600,timeout=5)
+
 
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -47,7 +46,7 @@ class XboxController(object):
 
     def _monitor_controller(self):
         while True:
-            ser.open()
+            ard.open()
             #change values if you want
 
 
