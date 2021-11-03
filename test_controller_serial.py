@@ -4,6 +4,11 @@ import serial
 import math
 import threading
 
+ser = serial.Serial()  # open serial port
+ser.baudrate = 19200
+ser.port = '' # select port
+ser
+
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
     MAX_JOY_VAL = math.pow(2, 15)
@@ -40,8 +45,9 @@ class XboxController(object):
         rb = self.RightBumper
         return [x, y, a, b, rb]
 
-    #def _monitor_controller(self):
-        #while True:
+    def _monitor_controller(self):
+        while True:
+            ser.open()
             #change values if you want
 
 
