@@ -17,6 +17,7 @@ int rightMotorSpeed=0;
 // Set up data recieve and use
 String readString = "";
 char lastIncomingChar;
+int ind0;
 int ind1;
 int ind2;
 String left_motors = "";
@@ -47,18 +48,17 @@ void loop() {
     if (Serial.available() > 0) {
           lastIncomingChar = Serial.read(); // grab the most recent char
           if(lastIncomingChar == '*') {
+            ind1 = readString.indexOf('.'); // find initial index value
             ind1 = readString.indexOf(','); // find index value of ',' in string
-            left_motors = readString.substring(0,ind1); // grab string from index 0 to ','
+            left_motors = readString.substring(ind0+1,ind1); // grab string from index 0 to ','
             right_motors = readString.substring(ind1+1); // grab string from index ',' on
             leftMotorSpeed = left_motors.toInt(); // get integer value and store
             rightMotorSpeed = right_motors.toInt();
-
             // change speed
             leftMotor1->setSpeed(leftMotorSpeed);
             leftMotor2->setSpeed(leftMotorSpeed);
             rightMotor1->setSpeed(rightMotorSpeed);
             rightMotor2->setSpeed(rightMotorSpeed);
-
             // clear string to reuse
             readString = "";
           }

@@ -117,6 +117,6 @@ if __name__ == '__main__':
     joy = XboxController()
     while True:
         speed_list = joy.read()
-        speed_string = f"{speed_list[0]},{speed_list[1]}*"
+        speed_string = f".{speed_list[0]},{speed_list[1]}*"
         print(speed_string)
         arduinoSerial.write(speed_string.encode())
