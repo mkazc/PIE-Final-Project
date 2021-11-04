@@ -18,6 +18,7 @@ int rightMotorSpeed=0;
 String readString = "";
 char lastIncomingChar;
 int ind1;
+int ind2;
 String left_motors = "";
 String right_motors = "";
 
@@ -43,7 +44,7 @@ void loop() {
   while(true) {
     if (Serial.available() > 0) {
           lastIncomingChar = Serial.read();
-          if(lastIncomingChar == '*'){
+          if(lastIncomingChar == '*') {
             ind1 = readString.indexOf(',');
             left_motors = readString.substring(0,ind1);
             right_motors = readString.substring(ind1+1);
@@ -61,7 +62,7 @@ void loop() {
             rightMotor2->run(FORWARD);
             readString = "";
           }
-          else{
+          else {
             readString += lastIncomingChar;
           }
     }
