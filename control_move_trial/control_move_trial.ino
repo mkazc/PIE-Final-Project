@@ -32,10 +32,10 @@ void setup() {
   rightMotor1->setSpeed(rightMotorSpeed);
   rightMotor2->setSpeed(rightMotorSpeed);
   // Stop the motors
-  leftMotor1->run(RELEASE);
-  leftMotor2->run(RELEASE);
-  rightMotor1->run(RELEASE);
-  rightMotor2->run(RELEASE);
+  leftMotor1->run(FORWARD);
+  leftMotor2->run(FORWARD);
+  rightMotor1->run(FORWARD);
+  rightMotor2->run(FORWARD);
   // Set up serial
   Serial.begin(9600);
 }
@@ -56,10 +56,6 @@ void loop() {
             rightMotor1->setSpeed(rightMotorSpeed);
             rightMotor2->setSpeed(rightMotorSpeed);
             
-            leftMotor1->run(FORWARD);
-            leftMotor2->run(FORWARD);
-            rightMotor1->run(FORWARD);
-            rightMotor2->run(FORWARD);
             readString = "";
           }
           else {
