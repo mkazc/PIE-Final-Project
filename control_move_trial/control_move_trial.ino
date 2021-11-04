@@ -17,10 +17,12 @@ int rightMotorSpeed=0;
 // Set up data recieve and use
 String readString = "";
 String data;
-char lastIncomingData = 0;
+char lastIncomingString;
 int ind1;
 String left_motors = "";
 String right_motors = "";
+String left_rev = "";
+String right_rev = "";
 
 
 void setup() {
@@ -43,19 +45,28 @@ void setup() {
 void loop() {
   while(true) {
     if (Serial.available() > 0) {
-          readString = Serial.read();
-          ind1 = readString.indexOf(',');
-          left_motors = readString.substring(0,ind1);
-          right_motors = readString.substring(ind1+1);
-          leftMotorSpeed = left_motors.toInt();
-          rightMotorSpeed = right_motors.toInt();
-          
-          leftMotor1->setSpeed(leftMotorSpeed);
-          leftMotor2->setSpeed(leftMotorSpeed);
-          rightMotor1->setSpeed(rightMotorSpeed);
-          rightMotor2->setSpeed(rightMotorSpeed);
-
-          //rightMotor2->run(FORWARD);
+          lastIncomingString = Serial.read();
+          if(lastIncomingString == '*'){
+            ind1 = readString.indexOf(',');
+            left_motors = readString.substring(0,ind1);
+            right_motors = readString.substring(ind1+1);
+            leftMotorSpeed = left_motors.toInt();
+            rightMotorSpeed = right_motors.toInt();
+            
+            leftMotor1->setSpeed(leftMotorSpeed);
+            leftMotor2->setSpeed(leftMotorSpeed);
+            rightMotor1->setSpeed(rightMotorSpeed);
+            rightMotor2->setSpeed(rightMotorSpeed);
+            
+            leftMotor1->run(FORWARD);
+            leftMotor2->run(FORWARD);
+            rightMotor1->run(FORWARD);
+            rightMotor2->run(FORWARD);
+            readString = "";
+          }
+    else{
+      readString += lastIncomingString;
+    }
     }
   }
 }
