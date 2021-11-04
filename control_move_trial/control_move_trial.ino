@@ -31,7 +31,8 @@ void setup() {
   leftMotor2->setSpeed(leftMotorSpeed);
   rightMotor1->setSpeed(rightMotorSpeed);
   rightMotor2->setSpeed(rightMotorSpeed);
-  // Stop the motors
+  // Stop the motors, set to run forward
+  // NOTE: Don't call often, will make wheels jitter
   leftMotor1->run(FORWARD);
   leftMotor2->run(FORWARD);
   rightMotor1->run(FORWARD);
@@ -42,24 +43,27 @@ void setup() {
 
 void loop() {
   while(true) {
+    // Make sure that there is new data over Serial
     if (Serial.available() > 0) {
-          lastIncomingChar = Serial.read();
+          lastIncomingChar = Serial.read(); // grab the most recent char
           if(lastIncomingChar == '*') {
-            ind1 = readString.indexOf(',');
-            left_motors = readString.substring(0,ind1);
-            right_motors = readString.substring(ind1+1);
-            leftMotorSpeed = left_motors.toInt();
+            ind1 = readString.indexOf(','); // find index value of ',' in string
+            left_motors = readString.substring(0,ind1); // grab string from index 0 to ','
+            right_motors = readString.substring(ind1+1); // grab string from index ',' on
+            leftMotorSpeed = left_motors.toInt(); // get integer value and store
             rightMotorSpeed = right_motors.toInt();
-            
+
+            // change speed
             leftMotor1->setSpeed(leftMotorSpeed);
             leftMotor2->setSpeed(leftMotorSpeed);
             rightMotor1->setSpeed(rightMotorSpeed);
             rightMotor2->setSpeed(rightMotorSpeed);
-            
+
+            // clear string to reuse
             readString = "";
           }
           else {
-            readString += lastIncomingChar;
+            readString += lastIncomingChar; // build string until '*' char is reached
           }
     }
   }

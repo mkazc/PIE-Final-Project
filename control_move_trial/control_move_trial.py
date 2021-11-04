@@ -19,19 +19,21 @@ def control_move(x,y,a,b,rb,rt):
     '''
     left_speed = 0
     right_speed = 0
-    # spin in place (change later)
+    # spin in place
     if rb:
         if (x < 0):
             right_speed = abs(x)*MOTOR_TOP_SPEED
         else:
             left_speed = abs(x)*MOTOR_TOP_SPEED
         return [round(left_speed), round(right_speed)]
+    # if "a" button pressed, go forward (with difference in X and Y)
     if a:
         left_speed = MOTOR_MID_SPEED + (x*MOTOR_INT_SPEED)
         right_speed = MOTOR_MID_SPEED - (x*MOTOR_INT_SPEED)
         increase_fwd = y*(MOTOR_TOP_SPEED-max(left_speed, right_speed))
         left_speed = left_speed + increase_fwd
         right_speed = right_speed + increase_fwd
+    # if "b" button pressed, stop both motors
     if b:
         left_speed = 0
         right_speed = 0
