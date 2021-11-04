@@ -48,7 +48,7 @@ void loop() {
     if (Serial.available() > 0) {
           lastIncomingChar = Serial.read(); // grab the most recent char
           if(lastIncomingChar == '*') {
-            ind1 = readString.indexOf('.'); // find initial index value
+            ind0 = readString.indexOf('.'); // find initial index value
             ind1 = readString.indexOf(','); // find index value of ',' in string
             left_motors = readString.substring(ind0+1,ind1); // grab string from index 0 to ','
             right_motors = readString.substring(ind1+1); // grab string from index ',' on
