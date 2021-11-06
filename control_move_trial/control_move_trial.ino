@@ -17,6 +17,7 @@ int rightMotorSpeed=0;
 // Set up data recieve and use
 String readString = "";
 char lastIncomingChar;
+bool begin = false;
 int ind0;
 int ind1;
 int ind2;
@@ -44,9 +45,16 @@ void setup() {
 
 void loop() {
   while(true) {
+    // Make sure data is at start
+    if (!begin){
+      lastIncomingChar = Serial.read(); // grab the most recent char
+      // when to start through ternary operator, make sure data format usable
+      begin = ( lastIncomingChar == '.' ) ? true : false;
+    }
     // Make sure that there is new data over Serial
-    if (Serial.available() > 0) {
+    if ((Serial.available() > 0) && (begin)) {
           lastIncomingChar = Serial.read(); // grab the most recent char
+          // run when final index sent
           if(lastIncomingChar == '*') {
             ind0 = readString.indexOf('.'); // find initial index value
             ind1 = readString.indexOf(','); // find index value of ',' in string
@@ -63,7 +71,8 @@ void loop() {
             readString = "";
           }
           else {
-            readString += lastIncomingChar; // build string until '*' char is reached
+            // build string starting from '.' until '*' char is reached
+            readString += lastIncomingChar;
           }
     }
   }
