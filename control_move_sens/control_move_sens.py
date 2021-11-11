@@ -33,8 +33,20 @@ def control_move(x,y,a,b,rb,rt):
         increase_fwd = y*(MOTOR_TOP_SPEED-max(left_speed, right_speed))
         left_speed = left_speed + increase_fwd
         right_speed = right_speed + increase_fwd
+        return [round(left_speed), round(right_speed)]
+
     # if "b" button pressed, stop both motors
     if b:
         left_speed = 0
         right_speed = 0
     return [round(left_speed), round(right_speed)]
+
+    #if right trigger pressed, go backwards
+    if rt:
+        if(y<0)
+            left_speed = MOTOR_MID_SPEED + (x*MOTOR_INT_SPEED)
+            right_speed = MOTOR_MID_SPEED - (x*MOTOR_INT_SPEED)
+            increase_fwd = y*(MOTOR_TOP_SPEED-max(left_speed, right_speed))
+            left_speed = (left_speed + increase_fwd)
+            right_speed = (right_speed + increase_fwd)
+        return [round(left_speed), round(right_speed)]
