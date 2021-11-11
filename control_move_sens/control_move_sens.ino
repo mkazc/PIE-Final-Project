@@ -23,7 +23,8 @@ int ind1;
 int ind2;
 String left_motors = "";
 String right_motors = "";
-
+int lastDirection;
+int currentDirection;
 
 void setup() {
   // put your setup code here, to run once:
@@ -63,28 +64,33 @@ void loop() {
             leftMotorSpeed = left_motors.toInt(); // get integer value and store
             rightMotorSpeed = right_motors.toInt();
             // change speed
-            if(leftMotorSpeed>0&&rightMotorSpeed>0){
+            currentDirection=1;
+            if(leftMotorSpeed<0&&rightMotorSpeed<0){
+              currentDirection=0;
+            }
+            if(currentDirection!=lastDirection){
+              if(currentDirection==1){
+                leftMotor1->run(FORWARD);
+                leftMotor2->run(FORWARD);
+                rightMotor1->run(FORWARD);
+                rightMotor2->run(FORWARD);
+                }
+              else{
+                leftMotor1->run(BACKWARD);
+                leftMotor2->run(BACKWARD);
+                rightMotor1->run(BACKWARD);
+                rightMotor2->run(BACKWARD);
+                }
+            }
+            leftMotorSpeed=abs(leftMotorSpeed);
+            rightMotorSpeed=abs(rightMotorSpeed);
             leftMotor1->setSpeed(leftMotorSpeed);
             leftMotor2->setSpeed(leftMotorSpeed);
             rightMotor1->setSpeed(rightMotorSpeed);
             rightMotor2->setSpeed(rightMotorSpeed);
-            }
-            else{
-              if(leftMotorSpeed<0){
-                leftMotor1->run(BACKWARD);
-                leftMotor2->run(BACKWARD);
-              }
-              if(rightMotorSpeed<0){
-                rightMotor1->run(BACKWARD);
-                rightMotor2->run(BACKWARD);
-              }
-              leftMotor1->setSpeed(leftMotorSpeed);
-              leftMotor2->setSpeed(leftMotorSpeed);
-              rightMotor1->setSpeed(rightMotorSpeed);
-              rightMotor2->setSpeed(rightMotorSpeed);
-            }
             // clear string to reuse
             readString = "";
+            lastDirection=currentDirection;
           }
           else {
             // build string starting from '.' until '*' char is reached
