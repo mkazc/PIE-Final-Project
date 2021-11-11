@@ -63,10 +63,26 @@ void loop() {
             leftMotorSpeed = left_motors.toInt(); // get integer value and store
             rightMotorSpeed = right_motors.toInt();
             // change speed
+            if(leftMotorSpeed>0&&rightMotorSpeed>0){
             leftMotor1->setSpeed(leftMotorSpeed);
             leftMotor2->setSpeed(leftMotorSpeed);
             rightMotor1->setSpeed(rightMotorSpeed);
             rightMotor2->setSpeed(rightMotorSpeed);
+            }
+            else{
+              if(leftMotorSpeed<0){
+                leftMotor1->run(BACKWARD);
+                leftMotor2->run(BACKWARD);
+              }
+              if(rightMotorSpeed<0){
+                rightMotor1->run(BACKWARD);
+                rightMotor2->run(BACKWARD);
+              }
+              leftMotor1->setSpeed(leftMotorSpeed);
+              leftMotor2->setSpeed(leftMotorSpeed);
+              rightMotor1->setSpeed(rightMotorSpeed);
+              rightMotor2->setSpeed(rightMotorSpeed);
+            }
             // clear string to reuse
             readString = "";
           }
