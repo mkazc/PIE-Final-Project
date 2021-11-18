@@ -75,7 +75,7 @@ void loop() {
   leftMotor2->setSpeed(Speed);
   rightMotor1->setSpeed(Speed);
   rightMotor2->setSpeed(Speed);
-  delay(1000);
+  delay(700);
 
   leftMotor1->run(FORWARD);
   leftMotor2->run(FORWARD);
