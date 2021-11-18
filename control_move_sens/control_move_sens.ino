@@ -26,6 +26,12 @@ String right_motors = "";
 int lastDirection;
 int currentDirection;
 
+
+#define echoF 2 // attach pin D2 Arduino to pin Echo of HC-SR04
+#define trigF 3 //attach pin D3 Arduino to pin Trig of HC-SR04
+long durationF;
+int distanceF;
+
 void setup() {
   // put your setup code here, to run once:
   AFMS.begin();
@@ -34,6 +40,9 @@ void setup() {
   leftMotor2->setSpeed(leftMotorSpeed);
   rightMotor1->setSpeed(rightMotorSpeed);
   rightMotor2->setSpeed(rightMotorSpeed);
+
+  pinMode(trigF, OUTPUT); // Sets the trigPin as an OUTPUT trigFront
+  pinMode(echoF, INPUT); // Sets the echoPin as an INPUT echoFront
   // Stop the motors, set to run forward
   // NOTE: Don't call often, will make wheels jitter
   leftMotor1->run(FORWARD);
@@ -47,6 +56,36 @@ void setup() {
 void loop() {
   while(true) {
     // Make sure data is at start
+    digitalWrite(trigF, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigF, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigF, LOW);
+    durationF = pulseIn(echoF, HIGH);
+    distanceF = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back) in cm
+
+  if(distanceF<5){
+  leftMotor1->run(BACKWARD);
+  leftMotor2->run(BACKWARD);
+  rightMotor1->run(BACKWARD);
+  rightMotor2->run(BACKWARD);
+
+  Speed=30
+  leftMotor1->setSpeed(Speed);
+  leftMotor2->setSpeed(Speed);
+  rightMotor1->setSpeed(Speed);
+  rightMotor2->setSpeed(Speed);
+  delay(1000);
+
+  leftMotor1->run(FORWARD);
+  leftMotor2->run(FORWARD);
+  rightMotor1->run(FORWARD);
+  rightMotor2->run(FORWARD);
+  leftMotor1->setSpeed(0);
+  leftMotor2->setSpeed(0);
+  rightMotor1->setSpeed(0);
+  rightMotor2->setSpeed(0);
+  }
     if (!begin){
       lastIncomingChar = Serial.read(); // grab the most recent char
       // when to start through ternary operator, make sure data format usable
@@ -54,6 +93,7 @@ void loop() {
     }
     // Make sure that there is new data over Serial
     if ((Serial.available() > 0) && (begin)) {
+      
           lastIncomingChar = Serial.read(); // grab the most recent char
           // run when final index sent
           if(lastIncomingChar == '*') {
