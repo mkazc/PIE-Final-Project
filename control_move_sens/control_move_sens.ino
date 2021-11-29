@@ -28,7 +28,8 @@ int currentDirection;
 #define echoF 2 // attach pin D2 Arduino to pin Echo of HC-SR04
 #define trigF 3 //attach pin D3 Arduino to pin Trig of HC-SR04
 long durationF;
-
+long distanceF;
+int Speed;
 
 void setup() {
   // put your setup code here, to run once:
@@ -58,7 +59,7 @@ void loop() {
         delayMicroseconds(10);
         digitalWrite(trigF, LOW);
         durationF = pulseIn(echoF, HIGH);
-        distanceF = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back) in cm
+        distanceF = durationF* 0.034 / 2; // Speed of sound wave divided by 2 (go and back) in cm
     
         if(distanceF<5){
           leftMotor1->run(BACKWARD);
@@ -66,7 +67,7 @@ void loop() {
           rightMotor1->run(BACKWARD);
           rightMotor2->run(BACKWARD);
         
-          Speed=30
+          Speed=30;
           leftMotor1->setSpeed(Speed);
           leftMotor2->setSpeed(Speed);
           rightMotor1->setSpeed(Speed);
