@@ -12,6 +12,18 @@ import serial
 import serial.tools.list_ports
 # import time
 
+import digitalio
+import board
+import busio
+import adafruit_rfm9x
+
+RADIO_FREQ_MHZ = 915.0
+CS = digitalio.DigitalInOut(board.CE1)
+RESET = digitalio.DigitalInOut(board.D25)
+spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
+rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ)
+
+
 # Set up Arduino connection
 arduino_ports = [
     p.device
@@ -33,18 +45,11 @@ ser = serial.Serial(
     xonxoff=True
     )
 
-'''
-while True:
-    time.sleep(2)
-    ser.write(bytes("hello world"))
-    print("Outputting transmiter buffer: " + str(ser.out_waiting))
-    print("Outputting reciver buffer: " + str(ser.in_waiting))
-
 
 
 print(arduino_ports[0])
 arduinoSerial = serial.Serial(arduino_ports[0], 9600, timeout=1)
-'''
+
 
 
 class XboxController(object):
