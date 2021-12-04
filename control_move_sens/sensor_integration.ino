@@ -30,6 +30,8 @@ int currentDirection;
 long durationF;
 long distanceF;
 int Speed;
+unsigned long new_time;
+unsigned long next_time;
 
 #define INTERVAL    30
 #define MAX_ECHO    30000
@@ -65,6 +67,7 @@ void loop() {
      new_time = millis( );
       if( new_time >= next_time )
       {
+        
         digitalWrite( trigF, HIGH );
         delayMicroseconds( 10 );
         digitalWrite( trigpin, LOW );
