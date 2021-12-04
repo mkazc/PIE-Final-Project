@@ -33,6 +33,8 @@ int Speed;
 int SENS_INTERVAL=10;
 unsigned long currentTime;
 unsigned long previousTime=0;
+unsigned long new_time;
+unsigned long next_time;
 
 #define INTERVAL    30
 #define MAX_ECHO    30000
