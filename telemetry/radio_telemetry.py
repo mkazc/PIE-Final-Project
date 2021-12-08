@@ -10,8 +10,6 @@ from control_move_sens_copy import control_move
 import warnings
 import serial
 import serial.tools.list_ports
-# import time
-
 import digitalio
 import board
 import busio
