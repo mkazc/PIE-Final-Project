@@ -27,8 +27,16 @@ int lastDirection=1;
 int currentDirection;
 #define echoF 2 // attach pin D2 Arduino to pin Echo of HC-SR04
 #define trigF 3 //attach pin D3 Arduino to pin Trig of HC-SR04
-long durationF;
+#define echoB 4 //SENSOR IN THE BACK
+#define trigB 5 //SENSOR IN THE BACK
+#define echoL 6 //SENSOR IN THE LEFT
+#define trigL 7 //SENSOR IN THE LEFT
+#define echoR 8 //SENSOR IN THE RIGHT
+#define trigR 9 //SENSOR IN THE RIGHT
 long distanceF;
+long distanceB;
+long distanceL;
+long distanceR;
 int Speed;
 unsigned long new_time;
 unsigned long next_time;
@@ -56,9 +64,17 @@ void setup() {
   // Set up serial
   next_time = INTERVAL;       /* set time from reset */
   pinMode( trigF, OUTPUT );
+  pinMode( trigB, OUTPUT );
+  pinMode( trigL, OUTPUT );
+  pinMode( trigR, OUTPUT );
   digitalWrite( trigF, LOW );       // Set trig pin LOW here NOT later
+  digitalWrite( trigB, LOW );       // Set trig pin LOW here NOT later
+  digitalWrite( trigL, LOW );       // Set trig pin LOW here NOT later
+  digitalWrite( trigR, LOW );       // Set trig pin LOW here NOT later
   pinMode( echoF, INPUT );
-  
+  pinMode( echoB, INPUT );
+  pinMode( echoL, INPUT );
+  pinMode( echoR, INPUT );
   Serial.begin( 9600 );
 }
 
@@ -69,13 +85,33 @@ void loop() {
       {
         
         digitalWrite( trigF, HIGH );
+        digitalWrite( trigB, HIGH );
+        digitalWrite( trigL, HIGH );
+        digitalWrite( trigR, HIGH );
         delayMicroseconds( 10 );
-        digitalWrite( trigpin, LOW );
-        distanceF = pulseIn( echopin, HIGH, MAX_ECHO );
-        if( distanceF > 0 )
+        digitalWrite( trigF, LOW );
+        digitalWrite( trigB, LOW );
+        digitalWrite( trigL, LOW );
+        digitalWrite( trigR, LOW );
+        distanceF = pulseIn( echoF, HIGH, MAX_ECHO );
+        distanceB = pulseIn( echoB, HIGH, MAX_ECHO );
+        distanceL = pulseIn( echoL, HIGH, MAX_ECHO );
+        distanceR = pulseIn( echoR, HIGH, MAX_ECHO );
+        if( distanceF > 0 ){
         distanceF /= SCALE_CM;
+        }
+        if( distanceB > 0 ){
+        distanceB /= SCALE_CM;
+        }
+        if( distanceL > 0 ){
+        distanceL /= SCALE_CM;
+        }
+        if( distanceR > 0 ){
+        distanceR /= SCALE_CM;
+        }
+        
         next_time = new_time + INTERVAL;   // save next time to run this part of loop
-      }
+       }
         if(distanceF<5){
           leftMotor1->run(BACKWARD);
           leftMotor2->run(BACKWARD);
@@ -87,7 +123,7 @@ void loop() {
           leftMotor2->setSpeed(Speed);
           rightMotor1->setSpeed(Speed);
           rightMotor2->setSpeed(Speed);
-          //delay(700);
+          delay(700);
         
           leftMotor1->run(FORWARD);
           leftMotor2->run(FORWARD);
@@ -98,6 +134,29 @@ void loop() {
           rightMotor1->setSpeed(0);
           rightMotor2->setSpeed(0);
         }
+        if(distanceB<5){
+          leftMotor1->run(FORWARD);
+          leftMotor2->run(FORWARD);
+          rightMotor1->run(FORWARD);
+          rightMotor2->run(FORWARD);
+        
+          Speed=30;
+          leftMotor1->setSpeed(Speed);
+          leftMotor2->setSpeed(Speed);
+          rightMotor1->setSpeed(Speed);
+          rightMotor2->setSpeed(Speed);
+          delay(700);
+        
+          leftMotor1->run(FORWARD);
+          leftMotor2->run(FORWARD);
+          rightMotor1->run(FORWARD);
+          rightMotor2->run(FORWARD);
+          leftMotor1->setSpeed(0);
+          leftMotor2->setSpeed(0);
+          rightMotor1->setSpeed(0);
+          rightMotor2->setSpeed(0);
+        }
+        
     if (Serial.available() > 0){
       // Make sure data is at start
       if (!begin){
