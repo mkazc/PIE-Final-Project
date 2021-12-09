@@ -176,7 +176,7 @@ void loop() {
         //maybe a warning to the driver?   
        
         }
->>>>>>> 20d889fe427029c8f42bb7f286c0eb2246e4db55
+>>>>>>> 
         
     if (Serial.available() > 0){
       // Make sure data is at start
