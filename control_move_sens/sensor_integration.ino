@@ -156,6 +156,10 @@ void loop() {
           rightMotor1->setSpeed(0);
           rightMotor2->setSpeed(0);
         }
+        if(distanceL<5 || distanceR<5){
+        //maybe a warning to the driver?   
+       
+        }
         
     if (Serial.available() > 0){
       // Make sure data is at start
