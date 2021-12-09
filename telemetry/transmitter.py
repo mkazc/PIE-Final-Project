@@ -1,26 +1,12 @@
-
-
-
-    # Test Xbox One Controller inputs using inputs library, reference Tensorkart project by @bzier.
+# Test Xbox One Controller inputs using inputs library, reference Tensorkart project by @bzier.
 
 from inputs import get_gamepad
 import math
 import threading
-from control_move_sens_copy import control_move
+from control_move_sens import control_move
 import warnings
 import serial
 import serial.tools.list_ports
-import digitalio
-import board
-import busio
-import adafruit_rfm9x
-
-RADIO_FREQ_MHZ = 915.0
-CS = digitalio.DigitalInOut(board.CE1)
-RESET = digitalio.DigitalInOut(board.D25)
-spi = busio.SPI(board.SCK, MOSI=board.MOSI, MISO=board.MISO)
-rfm9x = adafruit_rfm9x.RFM9x(spi, CS, RESET, RADIO_FREQ_MHZ)
-
 
 # Set up Arduino connection
 arduino_ports = [
@@ -33,21 +19,8 @@ if not arduino_ports:
 if len(arduino_ports) > 1:
     warnings.warn('Multiple Arduinos found - using the first')
 
-
-ser = serial.Serial(
-    port="/dev/tty.usbserial-AH01W3BD",
-    baudrate=9600,
-    parity=serial.PARITY_ODD,
-    stopbits=serial.STOPBITS_TWO,
-    bytesize=serial.EIGHTBITS,
-    xonxoff=True
-    )
-
-
-
 print(arduino_ports[0])
 arduinoSerial = serial.Serial(arduino_ports[0], 9600, timeout=1)
-
 
 
 class XboxController(object):
