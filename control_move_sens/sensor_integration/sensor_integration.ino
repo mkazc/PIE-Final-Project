@@ -34,7 +34,8 @@ int currentDirection;
 #define echoR 8 //SENSOR IN THE RIGHT
 #define trigR 9 //SENSOR IN THE RIGHT
 */
-long distanceF;
+long distanceF=10;
+long distanceFRaw;
 /*
 long distanceB;
 long distanceL;
@@ -104,14 +105,14 @@ void loop() {
         digitalWrite( trigL, LOW );
         digitalWrite( trigR, LOW );
         */
-        distanceF = pulseIn( echoF, HIGH, MAX_ECHO );
+        distanceFRaw = pulseIn( echoF, HIGH, MAX_ECHO );
         /*
         distanceB = pulseIn( echoB, HIGH, MAX_ECHO );
         distanceL = pulseIn( echoL, HIGH, MAX_ECHO );
         distanceR = pulseIn( echoR, HIGH, MAX_ECHO );
         */
-        if( distanceF > 0 ){
-        distanceF /= SCALE_CM;
+        if( distanceFRaw > 0 ){
+        distanceF = distanceFRaw/SCALE_CM;
         }
         /*if( distanceB > 0 ){
         distanceB /= SCALE_CM;

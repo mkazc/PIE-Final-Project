@@ -103,6 +103,8 @@ void loop() {
           right_motors = readString.substring(ind1+1); // grab string from index ',' on
           leftMotorSpeed = left_motors.toInt(); // get integer value and store
           rightMotorSpeed = right_motors.toInt();
+          Serial.println(leftMotorSpeed);
+          Serial.println(rightMotorSpeed);
           // change speed
           currentDirection=1;
           if(leftMotorSpeed<0&&rightMotorSpeed<0){
