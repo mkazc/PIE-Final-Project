@@ -148,35 +148,7 @@ void loop() {
           rightMotor1->setSpeed(0);
           rightMotor2->setSpeed(0);
         }
-<<<<<<< HEAD
-=======
-        if(distanceB<5){
-          leftMotor1->run(FORWARD);
-          leftMotor2->run(FORWARD);
-          rightMotor1->run(FORWARD);
-          rightMotor2->run(FORWARD);
-        
-          Speed=30;
-          leftMotor1->setSpeed(Speed);
-          leftMotor2->setSpeed(Speed);
-          rightMotor1->setSpeed(Speed);
-          rightMotor2->setSpeed(Speed);
-          delay(700);
-        
-          leftMotor1->run(FORWARD);
-          leftMotor2->run(FORWARD);
-          rightMotor1->run(FORWARD);
-          rightMotor2->run(FORWARD);
-          leftMotor1->setSpeed(0);
-          leftMotor2->setSpeed(0);
-          rightMotor1->setSpeed(0);
-          rightMotor2->setSpeed(0);
-        }
-        if(distanceL<5 || distanceR<5){
-        //maybe a warning to the driver?   
-       
-        }
->>>>>>> 
+
         
     if (Serial.available() > 0){
       // Make sure data is at start
