@@ -123,6 +123,7 @@ void loop() {
       // Note: needs to include '.', so not else if
       if (begin) {
         lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
+        Serial.println(newData);
         // run when final index sent
         if(lastIncomingChar == '*') {
           ind0 = readString.indexOf('.'); // find initial index value
@@ -165,6 +166,9 @@ void loop() {
           readString += lastIncomingChar;
         }
       }
+    }
+    else{
+      Serial.println("No Radio Available");
     }
   }
 }

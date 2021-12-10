@@ -36,6 +36,7 @@ void loop() {
         lastIncomingChar = Serial.read(); // grab the most recent char
         // run when final index sent
         radio.write(lastIncomingChar, sizeof(lastIncomingChar));
+        Serial.println(lastIncomingChar);
       }
     }
   }
