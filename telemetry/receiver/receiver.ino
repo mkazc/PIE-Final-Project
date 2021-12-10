@@ -122,7 +122,7 @@ void loop() {
       // Make sure that there is new data over Serial
       // Note: needs to include '.', so not else if
       if (begin) {
-        lastIncomingChar = Serial.read(); // grab the most recent char
+        lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
         // run when final index sent
         if(lastIncomingChar == '*') {
           ind0 = readString.indexOf('.'); // find initial index value
