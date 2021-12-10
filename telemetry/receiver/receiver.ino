@@ -24,6 +24,7 @@ String readString = "";
 char lastIncomingChar;
 char newData[6];
 bool begin = false;
+bool done;
 int ind0;
 int ind1;
 String left_motors = "";
@@ -75,9 +76,7 @@ void setup() {
 void loop() {
   while(true) {
     new_time = millis( );
-      if( new_time >= next_time )
-      {
-        
+      if( new_time >= next_time ){
         digitalWrite( trigF, HIGH );
         delayMicroseconds( 10 );
         digitalWrite( trigF, LOW );
@@ -112,7 +111,7 @@ void loop() {
         }
         
         
-    if (radio.available() > 0){
+    if (radio.available(newData)){
       // Make sure data is at start
       if (!begin){
         lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
@@ -122,48 +121,50 @@ void loop() {
       // Make sure that there is new data over Serial
       // Note: needs to include '.', so not else if
       if (begin) {
-        lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
-        Serial.println(newData);
-        // run when final index sent
-        if(lastIncomingChar == '*') {
-          ind0 = readString.indexOf('.'); // find initial index value
-          ind1 = readString.indexOf(','); // find index value of ',' in string
-          left_motors = readString.substring(ind0+1,ind1); // grab string from past '.' index to ','
-          right_motors = readString.substring(ind1+1); // grab string from index ',' on
-          leftMotorSpeed = left_motors.toInt(); // get integer value and store
-          rightMotorSpeed = right_motors.toInt();
-          // change speed
-          currentDirection=1;
-          if(leftMotorSpeed<0&&rightMotorSpeed<0){
-            currentDirection=0;
-          }
-          if(currentDirection!=lastDirection){
-            if(currentDirection==1){
-              leftMotor1->run(FORWARD);
-              leftMotor2->run(FORWARD);
-              rightMotor1->run(FORWARD);
-              rightMotor2->run(FORWARD);
+        while(!done){
+          done = radio.read(newData, sizeof(newData)); // grab the most recent char
+          Serial.println(newData);
+          // run when final index sent
+          if(lastIncomingChar == '*') {
+            ind0 = readString.indexOf('.'); // find initial index value
+            ind1 = readString.indexOf(','); // find index value of ',' in string
+            left_motors = readString.substring(ind0+1,ind1); // grab string from past '.' index to ','
+            right_motors = readString.substring(ind1+1); // grab string from index ',' on
+            leftMotorSpeed = left_motors.toInt(); // get integer value and store
+            rightMotorSpeed = right_motors.toInt();
+            // change speed
+            currentDirection=1;
+            if(leftMotorSpeed<0&&rightMotorSpeed<0){
+              currentDirection=0;
             }
-            else{
-              leftMotor1->run(BACKWARD);
-              leftMotor2->run(BACKWARD);
-              rightMotor1->run(BACKWARD);
-              rightMotor2->run(BACKWARD);
+            if(currentDirection!=lastDirection){
+              if(currentDirection==1){
+                leftMotor1->run(FORWARD);
+                leftMotor2->run(FORWARD);
+                rightMotor1->run(FORWARD);
+                rightMotor2->run(FORWARD);
+              }
+              else{
+                leftMotor1->run(BACKWARD);
+                leftMotor2->run(BACKWARD);
+                rightMotor1->run(BACKWARD);
+                rightMotor2->run(BACKWARD);
+                }
+            }
+          leftMotorSpeed=abs(leftMotorSpeed);
+          rightMotorSpeed=abs(rightMotorSpeed);
+            leftMotor1->setSpeed(leftMotorSpeed);
+            leftMotor2->setSpeed(leftMotorSpeed);
+            rightMotor1->setSpeed(rightMotorSpeed);
+            rightMotor2->setSpeed(rightMotorSpeed);
+            // clear string to reuse
+            readString = "";
+            lastDirection=currentDirection;
           }
-        }
-        leftMotorSpeed=abs(leftMotorSpeed);
-        rightMotorSpeed=abs(rightMotorSpeed);
-          leftMotor1->setSpeed(leftMotorSpeed);
-          leftMotor2->setSpeed(leftMotorSpeed);
-          rightMotor1->setSpeed(rightMotorSpeed);
-          rightMotor2->setSpeed(rightMotorSpeed);
-          // clear string to reuse
-          readString = "";
-          lastDirection=currentDirection;
-        }
-        else {
-          // build string starting from '.' until '*' char is reached
-          readString += lastIncomingChar;
+          else {
+            // build string starting from '.' until '*' char is reached
+            readString += lastIncomingChar;
+          }
         }
       }
     }
