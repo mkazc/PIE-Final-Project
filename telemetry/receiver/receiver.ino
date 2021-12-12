@@ -1,9 +1,13 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+#include "printf.h"
 RF24 radio(9, 10); // CE, CSN
-// NOTE: the "LL" at the end of the constant is "LongLong" type
-const uint64_t pipe = 0xE8E8F0F0E1LL; // Define the transmit pipe
+
+// Let these addresses be used for the pair
+uint8_t address[][6] = {"1Node", "2Node"};
+// It is very helpful to think of an address as a path instead of as
+// an identifying device destination
 
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
@@ -22,7 +26,6 @@ int rightMotorSpeed=0;
 // Set up data recieve and use
 String readString = "";
 char lastIncomingChar;
-char newData[6];
 bool begin = false;
 int ind0;
 int ind1;
@@ -42,6 +45,21 @@ unsigned long next_time;
 #define INTERVAL    30
 #define MAX_ECHO    30000
 #define SCALE_CM    58
+
+// to use different addresses on a pair of radios, we need a variable to
+// uniquely identify which address this radio will use to transmit
+bool radioNumber = 1; // 0 uses address[0] to transmit, 1 uses address[1] to transmit
+
+// Used to control whether this node is sending or receiving
+bool role = false;  // true = TX role, false = RX role
+
+// For this example, we'll be using a payload containing
+// a single float number that will be incremented
+// on every successful transmission
+float payload = 0.0;
+  
+
+void makePayload(uint8_t); // prototype to construct a payload dynamically
 
 void setup() {
   // put your setup code here, to run once:
@@ -64,13 +82,51 @@ void setup() {
   pinMode(trigF, OUTPUT);
   digitalWrite(trigF, LOW);       // Set trig pin LOW here NOT later
   pinMode(echoF, INPUT);
+
+
+   
   Serial.begin(9600);
-  delay(1000);
-  Serial.println("Nrf24L01 Receiver Starting");
-  radio.begin();
-  radio.openReadingPipe(1,pipe);
-  radio.startListening();
-}
+  while (!Serial) {
+    // some boards need to wait to ensure access to serial over USB
+  }
+
+  // initialize the transceiver on the SPI bus
+  if (!radio.begin()) {
+    Serial.println(F("radio hardware is not responding!!"));
+    while (1) {} // hold in infinite loop
+  }
+
+  while (!Serial.available()) {
+    // wait for user input
+  }
+  char input = Serial.parseInt();
+  radioNumber = 1;
+  Serial.print(F("radioNumber = "));
+  Serial.println((int)radioNumber);
+
+  // role variable is hardcoded to RX behavior, inform the user of this
+  Serial.println(F("*** PRESS 'T' to begin transmitting to the other node"));
+
+  // Set the PA Level low to try preventing power supply related problems
+  // because these examples are likely run with nodes in close proximity to
+  // each other.
+  radio.setPALevel(RF24_PA_LOW);  // RF24_PA_MAX is default.
+
+  // save on transmission time by setting the radio to only transmit the
+  // number of bytes we need to transmit a float
+  radio.setPayloadSize(sizeof(payload)); // float datatype occupies 4 bytes
+
+  // set the RX address of the TX node into a RX pipe
+  radio.openReadingPipe(1, address[!radioNumber]); // using pipe 1
+
+  // additional setup specific to the node's role
+  radio.startListening(); // put radio in RX mode
+
+  // For debugging info
+  // printf_begin();             // needed only once for printing details
+  // radio.printDetails();       // (smaller) function that prints raw register values
+  // radio.printPrettyDetails(); // (larger) function that prints human readable data
+} // setup
 
 void loop() {
   while(true) {
@@ -111,106 +167,62 @@ void loop() {
           rightMotor2->setSpeed(0);
         }
         
-        
-    if (radio.available() > 0){
-      // Make sure data is at start
-      if (!begin){
-        lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
-        // when to start through ternary operator, make sure data format usable
-        begin = ( lastIncomingChar == '.' ) ? true : false;
-      }
-      // Make sure that there is new data over Serial
-      // Note: needs to include '.', so not else if
-      if (begin) {
-        lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
-        Serial.println(newData);
-        // run when final index sent
-        if(lastIncomingChar == '*') {
-          ind0 = readString.indexOf('.'); // find initial index value
-          ind1 = readString.indexOf(','); // find index value of ',' in string
-          left_motors = readString.substring(ind0+1,ind1); // grab string from past '.' index to ','
-          right_motors = readString.substring(ind1+1); // grab string from index ',' on
-          leftMotorSpeed = left_motors.toInt(); // get integer value and store
-          rightMotorSpeed = right_motors.toInt();
-          // change speed
-          currentDirection=1;
-          if(leftMotorSpeed<0&&rightMotorSpeed<0){
-            currentDirection=0;
-          }
-          if(currentDirection!=lastDirection){
-            if(currentDirection==1){
-              leftMotor1->run(FORWARD);
-              leftMotor2->run(FORWARD);
-              rightMotor1->run(FORWARD);
-              rightMotor2->run(FORWARD);
-            }
-            else{
-              leftMotor1->run(BACKWARD);
-              leftMotor2->run(BACKWARD);
-              rightMotor1->run(BACKWARD);
-              rightMotor2->run(BACKWARD);
-          }
+    // This device is a RX node
+    uint8_t pipe;
+    if (radio.available(&pipe)) {             // is there a payload? get the pipe number that recieved it
+      uint8_t bytes = radio.getPayloadSize(); // get the size of the payload
+      radio.read(&payload, bytes);            // fetch payload from FIFO
+      // Serial.print(F("Received "));
+      // Serial.print(bytes);                    // print the size of the payload
+      // Serial.print(F(" bytes on pipe "));
+      // Serial.print(pipe);                     // print the pipe number
+      // Serial.print(F(": "));
+      // Serial.println(payload);                // print the payload's value
+      Serial.println(lastIncomingChar);
+      // run when final index sent
+      lastIncomingChar = payload;
+      if(lastIncomingChar == '*') {
+        ind0 = readString.indexOf('.'); // find initial index value
+        ind1 = readString.indexOf(','); // find index value of ',' in string
+        left_motors = readString.substring(ind0+1,ind1); // grab string from past '.' index to ','
+        right_motors = readString.substring(ind1+1); // grab string from index ',' on
+        leftMotorSpeed = left_motors.toInt(); // get integer value and store
+        rightMotorSpeed = right_motors.toInt();
+        // change speed
+        currentDirection=1;
+        if(leftMotorSpeed<0&&rightMotorSpeed<0){
+          currentDirection=0;
         }
-        leftMotorSpeed=abs(leftMotorSpeed);
-        rightMotorSpeed=abs(rightMotorSpeed);
-          leftMotor1->setSpeed(leftMotorSpeed);
-          leftMotor2->setSpeed(leftMotorSpeed);
-          rightMotor1->setSpeed(rightMotorSpeed);
-          rightMotor2->setSpeed(rightMotorSpeed);
-          // clear string to reuse
-          readString = "";
-          lastDirection=currentDirection;
-        }
-        else {
-          // build string starting from '.' until '*' char is reached
-          readString += lastIncomingChar;
+        if(currentDirection!=lastDirection){
+          if(currentDirection==1){
+            leftMotor1->run(FORWARD);
+            leftMotor2->run(FORWARD);
+            rightMotor1->run(FORWARD);
+            rightMotor2->run(FORWARD);
+          }
+          else{
+            leftMotor1->run(BACKWARD);
+            leftMotor2->run(BACKWARD);
+            rightMotor1->run(BACKWARD);
+            rightMotor2->run(BACKWARD);
         }
       }
-    }
-    else{
+      leftMotorSpeed=abs(leftMotorSpeed);
+      rightMotorSpeed=abs(rightMotorSpeed);
+        leftMotor1->setSpeed(leftMotorSpeed);
+        leftMotor2->setSpeed(leftMotorSpeed);
+        rightMotor1->setSpeed(rightMotorSpeed);
+        rightMotor2->setSpeed(rightMotorSpeed);
+        // clear string to reuse
+        readString = "";
+        lastDirection=currentDirection;
+      }
+      else {
+        // build string starting from '.' until '*' char is reached
+        readString += lastIncomingChar;
+      }
+    } else{
       Serial.println("No Radio Available");
     }
   }
 }
-
-
-
-
-
-
-/*
-void loop(){
-  if (radio.available()){              //Looking for the data.
-  char text[32] = "";                 //Saving the incoming data
-  radio.read(&text, sizeof(text));    //Reading the data
-  if(button_state == HIGH){
-    digitalWrite(6, HIGH);
-    Serial.println(text);
-    }
-  else{
-  digitalWrite(6, LOW);
-  Serial.println(text);}
-  }
-  delay(5);
-}
-
-
- void loop()   /****** LOOP: RUNS CONSTANTLY ******/
- /*
-{
-  if ( radio.available() )
-  {
-    // Read the data payload until we've received everything
-    bool done = false;
-    while (!done)
-    {
-      // Fetch the data payload
-      done = radio.read( RelaySwitch, sizeof(RelaySwitch) );
-      Serial.println(RelaySwitch[0]);
-    }
-  }
-  else
-  {    
-      Serial.println("No radio available");
-  }
-*/
