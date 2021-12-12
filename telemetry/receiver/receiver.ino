@@ -166,7 +166,7 @@ void loop() {
           rightMotor2->setSpeed(0);
         }
         
-<<<<<<< HEAD
+
     // This device is a RX node
     uint8_t pipe;
     if (radio.available(&pipe)) {             // is there a payload? get the pipe number that recieved it
@@ -178,9 +178,10 @@ void loop() {
       // Serial.print(pipe);                     // print the pipe number
       // Serial.print(F(": "));
       // Serial.println(payload);                // print the payload's value
-      Serial.println(lastIncomingChar);
+ 
       // run when final index sent
       lastIncomingChar = payload;
+      Serial.println(lastIncomingChar);
       if(lastIncomingChar == '*') {
         ind0 = readString.indexOf('.'); // find initial index value
         ind1 = readString.indexOf(','); // find index value of ',' in string
@@ -205,67 +206,10 @@ void loop() {
             leftMotor2->run(BACKWARD);
             rightMotor1->run(BACKWARD);
             rightMotor2->run(BACKWARD);
-=======
-        
-    if (radio.available(newData)){
-      // Make sure data is at start
-      if (!begin){
-        lastIncomingChar = radio.read(newData, sizeof(newData)); // grab the most recent char
-        // when to start through ternary operator, make sure data format usable
-        begin = ( lastIncomingChar == '.' ) ? true : false;
-      }
-      // Make sure that there is new data over Serial
-      // Note: needs to include '.', so not else if
-      if (begin) {
-        while(!done){
-          done = radio.read(newData, sizeof(newData)); // grab the most recent char
-          Serial.println(newData);
-          // run when final index sent
-          if(lastIncomingChar == '*') {
-            ind0 = readString.indexOf('.'); // find initial index value
-            ind1 = readString.indexOf(','); // find index value of ',' in string
-            left_motors = readString.substring(ind0+1,ind1); // grab string from past '.' index to ','
-            right_motors = readString.substring(ind1+1); // grab string from index ',' on
-            leftMotorSpeed = left_motors.toInt(); // get integer value and store
-            rightMotorSpeed = right_motors.toInt();
-            // change speed
-            currentDirection=1;
-            if(leftMotorSpeed<0&&rightMotorSpeed<0){
-              currentDirection=0;
-            }
-            if(currentDirection!=lastDirection){
-              if(currentDirection==1){
-                leftMotor1->run(FORWARD);
-                leftMotor2->run(FORWARD);
-                rightMotor1->run(FORWARD);
-                rightMotor2->run(FORWARD);
-              }
-              else{
-                leftMotor1->run(BACKWARD);
-                leftMotor2->run(BACKWARD);
-                rightMotor1->run(BACKWARD);
-                rightMotor2->run(BACKWARD);
-                }
-            }
-          leftMotorSpeed=abs(leftMotorSpeed);
-          rightMotorSpeed=abs(rightMotorSpeed);
-            leftMotor1->setSpeed(leftMotorSpeed);
-            leftMotor2->setSpeed(leftMotorSpeed);
-            rightMotor1->setSpeed(rightMotorSpeed);
-            rightMotor2->setSpeed(rightMotorSpeed);
-            // clear string to reuse
-            readString = "";
-            lastDirection=currentDirection;
           }
-          else {
-            // build string starting from '.' until '*' char is reached
-            readString += lastIncomingChar;
-          }
->>>>>>> 33e52021aa074f927a2c69706eba8851cb115624
-        }
-      }
-      leftMotorSpeed=abs(leftMotorSpeed);
-      rightMotorSpeed=abs(rightMotorSpeed);
+
+        leftMotorSpeed=abs(leftMotorSpeed);
+        rightMotorSpeed=abs(rightMotorSpeed);
         leftMotor1->setSpeed(leftMotorSpeed);
         leftMotor2->setSpeed(leftMotorSpeed);
         rightMotor1->setSpeed(rightMotorSpeed);
@@ -273,12 +217,14 @@ void loop() {
         // clear string to reuse
         readString = "";
         lastDirection=currentDirection;
+        }
+        else {
+          // build string starting from '.' until '*' char is reached
+          readString += lastIncomingChar;
+        }
       }
-      else {
-        // build string starting from '.' until '*' char is reached
-        readString += lastIncomingChar;
-      }
-    } else{
+    } 
+    else{
       Serial.println("No Radio Available");
     }
   }
