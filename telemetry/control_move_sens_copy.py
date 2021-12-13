@@ -23,8 +23,10 @@ def control_move(x,y,a,b,rb,rt):
     if rb:
         if (x < 0):
             right_speed = abs(x)*MOTOR_TOP_SPEED
+            left_speed = -right_speed
         else:
             left_speed = abs(x)*MOTOR_TOP_SPEED
+            right_speed = -left_speed
         return [round(left_speed), round(right_speed)]
     # if "a" button pressed, go forward (with difference in X and Y)
     if a:
