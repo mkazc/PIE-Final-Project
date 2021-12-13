@@ -3,10 +3,11 @@
 from inputs import get_gamepad
 import math
 import threading
-from control_move_sens import control_move
+from control_move_sens_copy import control_move
 import warnings
 import serial
 import serial.tools.list_ports
+
 
 # Set up Arduino connection
 arduino_ports = [
