@@ -44,11 +44,10 @@ void setup() {
    //while (!Serial.available()) {
    // wait for user input
    //}
-   Serial.println(F("Which radio is this? Enter '0' or '1'. Defaults to '0'"));
    char input = Serial.parseInt();
    radioNumber = 0;
-   Serial.print(F("radioNumber = "));
-   Serial.println((int)radioNumber);
+   //Serial.print(F("radioNumber = "));
+   //Serial.println((int)radioNumber);
   
    // role variable is hardcoded to RX behavior, inform the user of this
    // Serial.println(("PRESS 'T' to begin transmitting to the other node"));
@@ -81,7 +80,7 @@ void setup() {
 
 void loop() {
   while(true) {
-    if (Serial.available() > 0){
+    if (Serial.available()){
       // Make sure data is at start
       Serial.println("taking serial data!");
       if (!begin){
@@ -93,7 +92,7 @@ void loop() {
       // Note: needs to include '.', so not else if
       if (begin) {
         lastIncomingChar = Serial.read(); // grab the most recent char
-
+        Serial.println(lastIncomingChar);
         unsigned long start_timer = micros();                    // start the timer
         bool report = radio.write(&payload, sizeof(float));      // transmit & save the report
         unsigned long end_timer = micros();                      // end the timer
@@ -109,6 +108,9 @@ void loop() {
         // to make this example readable in the serial monitor
         } delay(1000);  // slow transmissions down by 1 second
       }
+    }
+    else{
+      Serial.println("No Serial Data");
     }
   }
 }
