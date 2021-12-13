@@ -97,31 +97,31 @@ void setup() {
     while (1) {} // hold in infinite loop
   }
 
-  while (!Serial.available()) {
-    // wait for user input
-  }
-  char input = Serial.parseInt();
-  radioNumber = 1;
-  Serial.print(F("radioNumber = "));
-  Serial.println((int)radioNumber);
+  if (radio.begin()){
+    Serial.println("no hardware issue yayy...");
+    //while (!Serial.available()) {
+      // wait for user input
+    //}
+    char input = Serial.parseInt();
+    radioNumber = 1;
+    Serial.print(F("radioNumber = "));
+    Serial.println((int)radioNumber);
 
-  // role variable is hardcoded to RX behavior, inform the user of this
-  Serial.println(F("*** PRESS 'T' to begin transmitting to the other node"));
+    // Set the PA Level low to try preventing power supply related problems
+    // because these examples are likely run with nodes in close proximity to
+    // each other.
+    radio.setPALevel(RF24_PA_LOW);  // RF24_PA_MAX is default.
 
-  // Set the PA Level low to try preventing power supply related problems
-  // because these examples are likely run with nodes in close proximity to
-  // each other.
-  radio.setPALevel(RF24_PA_LOW);  // RF24_PA_MAX is default.
+    // save on transmission time by setting the radio to only transmit the
+    // number of bytes we need to transmit a float
+    radio.setPayloadSize(sizeof(payload)); // float datatype occupies 4 bytes
 
-  // save on transmission time by setting the radio to only transmit the
-  // number of bytes we need to transmit a float
-  radio.setPayloadSize(sizeof(payload)); // float datatype occupies 4 bytes
+    // set the RX address of the TX node into a RX pipe
+    radio.openReadingPipe(1, address[!radioNumber]); // using pipe 1
 
-  // set the RX address of the TX node into a RX pipe
-  radio.openReadingPipe(1, address[!radioNumber]); // using pipe 1
-
-  // additional setup specific to the node's role
-  radio.startListening(); // put radio in RX mode
+    // additional setup specific to the node's role
+    radio.startListening(); // put radio in RX mode
+  }  
 
   // For debugging info
   // printf_begin();             // needed only once for printing details

@@ -39,17 +39,19 @@ void setup() {
      Serial.println(F("radio hardware is not responding!!"));
      while (1) {} // hold in infinite loop
    }
-  
-   while (!Serial.available()) {
-     // wait for user input
-   }
+   // print example's introductory prompt
+   Serial.println(F("RF24/examples/GettingStarted"));
+   //while (!Serial.available()) {
+   // wait for user input
+   //}
+   Serial.println(F("Which radio is this? Enter '0' or '1'. Defaults to '0'"));
    char input = Serial.parseInt();
-   radioNumber = 1;
+   radioNumber = 0;
    Serial.print(F("radioNumber = "));
    Serial.println((int)radioNumber);
   
    // role variable is hardcoded to RX behavior, inform the user of this
-   Serial.println(F("*** PRESS 'T' to begin transmitting to the other node"));
+   // Serial.println(("PRESS 'T' to begin transmitting to the other node"));
   
    // Set the PA Level low to try preventing power supply related problems
    // because these examples are likely run with nodes in close proximity to
@@ -59,7 +61,7 @@ void setup() {
    // save on transmission time by setting the radio to only transmit the
    // number of bytes we need to transmit a float
    radio.setPayloadSize(sizeof(payload)); // float datatype occupies 4 bytes
-  
+
    // set the TX address of the RX node into the TX pipe
    radio.openWritingPipe(address[radioNumber]);     // always uses pipe 0
   
@@ -70,7 +72,7 @@ void setup() {
    radio.stopListening();  // put radio in TX mode
   
    // For debugging info
-   // printf_begin();             // needed only once for printing details
+   //printf_begin();             // needed only once for printing details
    // radio.printDetails();       // (smaller) function that prints raw register values
    // radio.printPrettyDetails(); // (larger) function that prints human readable data
   
@@ -79,9 +81,9 @@ void setup() {
 
 void loop() {
   while(true) {
-    
     if (Serial.available() > 0){
       // Make sure data is at start
+      Serial.println("taking serial data!");
       if (!begin){
         lastIncomingChar = Serial.read(); // grab the most recent char
         // when to start through ternary operator, make sure data format usable
